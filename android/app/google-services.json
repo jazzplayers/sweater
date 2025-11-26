@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "591116589671",
+    "project_id": "sweater-spark",
+    "storage_bucket": "sweater-spark.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:591116589671:android:4883f96da56546959312c2",
+        "android_client_info": {
+          "package_name": "com.example.sweater"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBVEYf9s-x3fA4eCdgOG-wbSD7zn1qRJgo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

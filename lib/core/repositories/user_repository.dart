@@ -1,0 +1,20 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:sweater/models/user_profile.dart';
+
+class UserRepository {
+  final FirebaseFirestore _db;
+  UserRepository(this._db);
+
+  Future<UserProfile?> getUser(String uid) async {
+    final doc = await _db.collection('users').doc(uid).get();
+    if (!doc.exists) return null;
+    return UserProfile.fromMap(doc.data()!);
+  }
+
+  Stream<UserProfile?> watchUser(String uid) {
+    return _db.collection('users').doc(uid).snapshots().map((doc) {
+      if (!doc.exists) return null;
+      return UserProfile.fromMap(doc.data()!);
+    });
+  }
+}
