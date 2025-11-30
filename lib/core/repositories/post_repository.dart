@@ -68,7 +68,8 @@ class PostRepository {
     required List<File> images,
     String? text,
   }) async {
-    final postRef = _db.collection('posts').doc();
+    final userRef = _db.collection('users').doc(uid);
+    final postRef = _db.collection('posts').doc(uid);
     final postId = postRef.id;
 
     final urls = <String>[];
@@ -86,6 +87,10 @@ class PostRepository {
       'likeCount': 0,
       'commentCount': 0,
       'createdAt': FieldValue.serverTimestamp(),
+    });
+
+    await userRef.update({
+      'postsCount' : FieldValue.increment(1)
     });
   }
 }

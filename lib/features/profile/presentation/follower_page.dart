@@ -30,7 +30,7 @@ class FollowerPage extends ConsumerWidget {
           loading: () => const CircularProgressIndicator(),
         ),
       ),
-      body: Column(
+      body: Row(
         children: [
           TextField(
             decoration: InputDecoration(
