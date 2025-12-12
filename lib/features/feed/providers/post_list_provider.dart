@@ -59,7 +59,7 @@ class PostListNotifier extends StateNotifier<PostListState> {
     ).limit(pageSize);
     final snap = await q.get();
 
-    final posts = snap.docs.map((d) => Post.fromDoc(d)).toList();
+    final posts = snap.docs.map((d) => Post.fromMap(d.data(), d.id)).toList();
 
     state = PostListState(
       items: posts,
@@ -83,7 +83,7 @@ class PostListNotifier extends StateNotifier<PostListState> {
     }
 
     final snap = await q.get();
-    final more = snap.docs.map((d) => Post.fromDoc(d)).toList();
+    final more = snap.docs.map((doc) => Post.fromMap(doc.data(), doc.id)).toList();
 
     state = state.copyWith(
       items: [...state.items, ...more],
@@ -93,11 +93,14 @@ class PostListNotifier extends StateNotifier<PostListState> {
     );
   }
 
+
   /// 헬퍼: 특정 유저 피드 새로고침
-  Future<void> refreshUser(String ownerUid) => refresh(ownerUid: ownerUid);
+  Future<void> refreshUser(String ownerUid) =>
+   refresh(ownerUid: ownerUid);
 
   /// 헬퍼: 특정 유저 피드 더 불러오기
-  Future<void> loadMoreUser(String ownerUid) => loadMore(ownerUid: ownerUid);
+  Future<void> loadMoreUser(String ownerUid) => 
+  loadMore(ownerUid: ownerUid);
 }
 
 /// ==============================
@@ -112,6 +115,7 @@ final postListProvider = StateNotifierProvider<PostListNotifier, PostListState>(
     final notifier = PostListNotifier(db, repo);
     // 앱 시작 시 전체 피드 최초 로드가 필요하면 활성화:
     // unawaited(notifier.refresh());
+    Future.microtask(() => notifier.refresh());
     return notifier;
   },
 );

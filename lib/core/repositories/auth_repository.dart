@@ -20,6 +20,7 @@ class AuthRepository {
     required String email,
     required String password,
     required String displayName,
+    String? photoURL,
   }) async {
     // 1) Auth 계정 생성
     final cred = await _auth.createUserWithEmailAndPassword(
@@ -32,6 +33,7 @@ class AuthRepository {
       await cred.user!.updateDisplayName(displayName);
       // await cred.user!.reload(); // 필요 시
     }
+
 
     // 3) Firestore 프로필 문서 생성 (모델 → toMap 사용)
     final profile = UserProfile(

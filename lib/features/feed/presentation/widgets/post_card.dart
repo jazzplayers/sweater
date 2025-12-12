@@ -1,14 +1,18 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:sweater/features/profile/model/avatar.dart';
+import 'package:sweater/models/sweateringstatus.dart';
 import '../../../../models/post.dart';
 import 'package:sweater/features/feed/providers/like_providers.dart';
 import 'package:sweater/core/providers/firebase_provider.dart';
 import 'package:sweater/utills/time_formatter.dart';
+import 'package:sweater/features/profile/widget/avatar_widget.dart';
 
 class PostCard extends ConsumerWidget {
+  final Sweateringstatus status;
   final Post post;
-  const PostCard({super.key, required this.post});
+  const PostCard({super.key, required this.post, required this.status});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -18,12 +22,15 @@ class PostCard extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         ListTile(
-          leading: CircleAvatar(
-            backgroundImage:
-                post.ownerPhotoURL != null
-                    ? NetworkImage(post.ownerPhotoURL!)
-                    : null,
-            child: post.ownerPhotoURL == null ? const Icon(Icons.person) : null,
+          leading: ProfileAvatar(
+            avatar: Avatar(
+              uid: post.ownerId,
+              avatarId: post.ownerId,
+              completedAt: DateTime.now(),
+              status: status,
+              imageUrl: post.ownerPhotoURL ?? '',
+              isPublic: true,
+            ),
           ),
           title: Text(post.ownerName),
           subtitle: Text(formatTimeAgo(post.createdAt)),
@@ -40,6 +47,10 @@ class PostCard extends ConsumerWidget {
         Row(
           children: [
             IconButton(
+              ///maybewhen은 Riverpod의 AsyncValue에서 제공하는 메서드로,
+              ///when은 에러처리, 로딩처리까지 모두 해야하지만
+              ///maybewhen은 특정 상태에 대해서만 처리하고,
+              ///나머지 상태에 대해서는 orElse로 처리할 수 있다.
               icon: isLikedAsync.maybeWhen(
                 data:
                     (isLiked) => Icon(

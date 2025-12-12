@@ -1,10 +1,10 @@
 // lib/features/post_list/post_list_provider.dart
-import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:sweater/core/providers/firebase_provider.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'dart:io';
+import 'package:sweater/models/post.dart';
 
 class PostRepository {
   /// firebaseFirestore = 문서,컬렉션을 저장하는 데이터베이스
@@ -17,6 +17,24 @@ class PostRepository {
 
   Query<Map<String, dynamic>> get baseQuery =>
       _db.collection('posts').orderBy('createdAt', descending: true);
+
+  Stream<List<Post>> postsStream() {
+    return baseQuery.snapshots().map(
+      (snap) =>
+        snap.docs.map(
+          (doc) => Post.fromMap(doc.data(), doc.id)).toList()
+          );
+  }
+
+  Stream<List<Post>> userPosts(String uid) {
+    return _db
+        .collection('posts')
+        .where('ownerId', isEqualTo: uid)
+        .orderBy('createdAt', descending: true)
+        .snapshots()
+        .map((snapshot) =>
+            snapshot.docs.map((doc) => Post.fromMap(doc.data(), doc.id)).toList());
+  }
 
   Future<void> toggleLike({required String postId, required String uid}) async {
     final likeRef = _db
@@ -69,7 +87,7 @@ class PostRepository {
     String? text,
   }) async {
     final userRef = _db.collection('users').doc(uid);
-    final postRef = _db.collection('posts').doc(uid);
+    final postRef = _db.collection('posts').doc();
     final postId = postRef.id;
 
     final urls = <String>[];
@@ -100,4 +118,9 @@ final postRepositoryProvider = Provider<PostRepository>((ref) {
     ref.watch(firestoreProvider),
     ref.watch(storageProvider),
   );
+});
+
+final userPostsProvider = StreamProvider.family<List<Post>, String>((ref, uid) {
+  final repo = ref.watch(postRepositoryProvider);
+  return repo.userPosts(uid);
 });

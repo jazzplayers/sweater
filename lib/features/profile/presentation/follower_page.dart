@@ -1,22 +1,25 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:sweater/features/feed/presentation/widgets/bottomsheet.dart';
 import 'package:sweater/features/profile/providers/follow_provider.dart';
 import 'package:sweater/features/profile/providers/follower_search_provider.dart';
-import 'package:sweater/features/profile/widget/avatar.dart';
-import 'package:sweater/models/user_profile.dart';
+import 'package:sweater/features/profile/widget/avatar_widget.dart';
+import 'package:sweater/models/sweateringstatus.dart';
 import 'package:sweater/features/profile/providers/user_profile_provider.dart';
-import 'package:sweater/features/profile/providers/follower_search_provider.dart';
+import 'package:sweater/features/profile/model/avatar.dart';
+
 
 class FollowerPage extends ConsumerWidget {
   final String targetUid;
-  const FollowerPage({super.key, required this.targetUid});
+  const FollowerPage({super.key, required this.targetUid,});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final asyncUser = ref.watch(userProfileProvider(targetUid));
+    final asyncUser = ref.watch(userStreamProvider(targetUid));
     final followersAsync = ref.watch(followersProvider(targetUid));
+    final Sweateringstatus status =
+        ref.watch(sweateringStateProvider); 
     return Scaffold(
       appBar: AppBar(
         title: asyncUser.when(
@@ -52,12 +55,19 @@ class FollowerPage extends ConsumerWidget {
                 itemBuilder: (context, index) {
                   final user = followers[index];
                   return ListTile(
-                    leading: ProfileAvatar(uid: targetUid),
+                    leading: ProfileAvatar(
+                      avatar: Avatar(
+                        uid: user.uid,
+                        avatarId: user.uid,
+                        completedAt: DateTime.now(),
+                        status: status,
+                        imageUrl: user.photoURL ?? '',
+                      ),
+                    ),  
                     title: Text(user.displayName),
                     onTap: () {
                       context.push('/profile/${user.uid}');
                     },
-
                     /// 상대 프로필 페이지로 이동
                   );
                 },

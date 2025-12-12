@@ -10,6 +10,7 @@ class Post {
   final int likeCount;
   final int commentCount;
   final DateTime? createdAt;
+  final bool isLiked;
 
   Post({
     required this.postId,
@@ -21,6 +22,7 @@ class Post {
     required this.likeCount,
     required this.commentCount,
     this.createdAt,
+    this.isLiked = false,
   });
 
   /// Firebase에서 문서(doc) 를 읽어올 때,
@@ -28,18 +30,18 @@ class Post {
   /// Firestore는 데이터를 항상 Map<String, dynamic> 형태로 주기 때문에
   /// data()로 받아온 Map을 객체로 가공하는 것이다.
 
-  factory Post.fromDoc(DocumentSnapshot doc) {
-    final data = doc.data() as Map<String, dynamic>;
+  factory Post.fromMap(Map<String, dynamic> map, String postId) {
     return Post(
-      postId: doc.id,
-      ownerId: data['ownerId'],
-      ownerName: data['ownerName'] ?? '',
-      ownerPhotoURL: data['ownerPhotoURL'],
-      imageURLs: (data['imageURLs'] as List).map((e) => e as String).toList(),
-      text: data['text'],
-      likeCount: (data['likeCount'] ?? 0) as int,
-      commentCount: (data['commentCount'] ?? 0) as int,
-      createdAt: (data['createdAt'] as Timestamp?)?.toDate(),
+      postId: postId,
+      ownerId: map['ownerId'],
+      ownerName: map['ownerName'] ?? '',
+      ownerPhotoURL: map['ownerPhotoURL'],
+      imageURLs: (map['imageURLs'] as List).map((e) => e as String).toList(),
+      text: map['text'],
+      likeCount: (map['likeCount'] ?? 0) as int,
+      commentCount: (map['commentCount'] ?? 0) as int,
+      createdAt: (map['createdAt'] as Timestamp?)?.toDate(),
+      isLiked: map['isLiked'] ?? false,
     );
   }
 }

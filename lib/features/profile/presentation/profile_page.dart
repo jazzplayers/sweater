@@ -1,27 +1,25 @@
-import 'dart:math';
-
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sweater/core/providers/post_provider.dart';
-import 'package:sweater/features/auth/auth_provider.dart';
-import 'package:sweater/features/profile/providers/follow_provider.dart';
+import 'package:sweater/features/auth/provider/auth_provider.dart';
+import 'package:sweater/features/profile/model/avatar.dart';
 import 'package:sweater/features/profile/providers/follow_state.dart';
 import 'package:sweater/features/profile/providers/user_profile_provider.dart';
-import 'package:sweater/core/repositories/auth_repository.dart';
 import 'package:sweater/models/user_profile.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:sweater/features/profile/widget/avatar_widget.dart';
 
 
 class ProfilePage extends ConsumerWidget {
+  final Avatar avatar;
   final String targetUid;
-  const ProfilePage({super.key, required this.targetUid});
+  const ProfilePage({super.key, required this.targetUid, required this.avatar});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final asyncUser = ref.watch(userFutureProvider(targetUid));
     final followState = ref.watch(followControllerProvider(targetUid));
-    final asyncPosts = ref.watch(postsProvider(targetUid));
+    final asyncPosts = ref.watch(userPostsProvider(targetUid));
 
     return DefaultTabController(
       length: 3,
@@ -37,7 +35,7 @@ class ProfilePage extends ConsumerWidget {
               return Text(user.displayName);
             },
             error: (e,_) => Text('$e'), 
-            loading: () => const CircularProgressIndicator()),
+            loading: () => Text("")),
           actions: [
             IconButton(
               onPressed: () => ref.read(authRepositoryProvider).signOut(),
@@ -72,21 +70,12 @@ class ProfilePage extends ConsumerWidget {
                     const SizedBox(height: 24),
                     Column(
                       children: [
-                    CircleAvatar(
-                      radius: 24,
-                      backgroundImage:
-                          user.photoURL != null ? NetworkImage(user.photoURL!) : null,
-                      child:
-                          user.photoURL == null
-                              ? const Icon(Icons.person, size: 24)
-                              : null,
-                    ),
+                    ProfileAvatar(avatar: avatar),
                     const SizedBox(height: 16),
                     Text(user.displayName, style: const TextStyle(fontSize: 20)),
                       ]
-                    ),
-      
-      
+                    ),      
+  
                     const SizedBox(height: 8),
                 
                     // counts: posts / followers / following
@@ -175,7 +164,7 @@ Expanded(
       asyncPosts.when(
         data: (posts) {
           if (posts.isEmpty) {
-            return const Center(child: Text('No posts yet'));
+            return const Center(child: Text('No Posts Yet'));
           }
           return GridView.builder(
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -186,6 +175,10 @@ Expanded(
             itemCount: posts.length,
             itemBuilder: (context, index) {
               final post = posts[index];
+              final thumbNailUrl = post.imageURLs.isNotEmpty ? post.imageURLs.first : null;
+              if (thumbNailUrl == null) {
+                return Container(color: Colors.grey);
+              }
               return Image.network(
                 post.imageURLs.first,
                 fit: BoxFit.cover,

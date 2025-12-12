@@ -77,49 +77,53 @@ class _NewPostPageState extends ConsumerState<NewPostPage> {
           ),
         ],
       ),
-      body: ListView(
-        padding: const EdgeInsets.all(16),
-        children: [
-          // 본문 입력창
-          TextField(
-            controller: _textCtrl,
-            maxLines: null,
-            decoration: const InputDecoration(
-              hintText: '문구를 입력하세요...',
-              border: InputBorder.none,
+      body: GestureDetector(
+        onTap: () => FocusScope.of(context).unfocus(),
+        behavior: HitTestBehavior.translucent,
+        child: ListView(
+          padding: const EdgeInsets.all(16),
+          children: [
+            // 본문 입력창
+            TextField(
+              controller: _textCtrl,
+              maxLines: null,
+              decoration: const InputDecoration(
+                hintText: '문구를 입력하세요...',
+                border: InputBorder.none,
+              ),
             ),
-          ),
-          const SizedBox(height: 12),
-
-          // 이미지 미리보기
-          Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            children: [
-              for (final f in _files)
-                Stack(
-                  children: [
-                    Image.file(f, width: 100, height: 100, fit: BoxFit.cover),
-                    Positioned(
-                      right: 0,
-                      top: 0,
-                      child: GestureDetector(
-                        onTap: () => _removeImage(f),
-                        child: Container(
-                          color: Colors.black54,
-                          child: const Icon(Icons.close, color: Colors.white),
+            const SizedBox(height: 12),
+        
+            // 이미지 미리보기
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: [
+                for (final f in _files)
+                  Stack(
+                    children: [
+                      Image.file(f, width: 100, height: 100, fit: BoxFit.cover),
+                      Positioned(
+                        right: 0,
+                        top: 0,
+                        child: GestureDetector(
+                          onTap: () => _removeImage(f),
+                          child: Container(
+                            color: Colors.black54,
+                            child: const Icon(Icons.close, color: Colors.white),
+                          ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
+                IconButton(
+                  onPressed: _pick,
+                  icon: const Icon(Icons.add_photo_alternate, size: 40),
                 ),
-              IconButton(
-                onPressed: _pick,
-                icon: const Icon(Icons.add_photo_alternate, size: 40),
-              ),
-            ],
-          ),
-        ],
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

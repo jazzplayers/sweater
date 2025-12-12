@@ -45,6 +45,9 @@ dependencies:
   cached_network_image: ^3.4.1
   intl: ^0.20.2
   firebase_app_check: ^0.4.1+2
+  google_maps_flutter: ^2.14.0
+  location: ^8.0.1
+  geolocator: ^14.0.2
 
 dev_dependencies:
   flutter_test:

@@ -2,12 +2,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:sweater/features/feed/presentation/feed_page.dart';
+import 'package:sweater/features/feed/presentation/page/feed_page.dart';
 import 'package:sweater/core/providers/firebase_provider.dart';
-import 'package:sweater/features/auth/login_page.dart';
-import 'package:sweater/features/feed/presentation/new_post_page.dart';
+import 'package:sweater/features/auth/presentation/login_page.dart';
+import 'package:sweater/features/feed/presentation/page/new_post_page.dart';
 import 'package:sweater/features/profile/presentation/profile_page.dart';
 import 'dart:async';
+import 'package:sweater/features/map/presentation/map.dart';
 
 final goRouterProvider = Provider<GoRouter>((ref) {
   // ✅ authStateChanges "스트림"을 직접 사용
@@ -51,6 +52,11 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                 (context, state) =>
                     const NoTransitionPage(child: NewPostPage()),
           ),
+           GoRoute(
+            path: '/map',
+            pageBuilder:
+                (context, state) => const NoTransitionPage(child: MapPage()),
+          ),
           GoRoute(
             path: '/profile',
             builder: (context, state) {
@@ -74,7 +80,8 @@ class _HomeShell extends StatelessWidget {
   int _indexForLocation(BuildContext context) {
     final loc = GoRouterState.of(context).matchedLocation;
     if (loc.startsWith('/upload')) return 1;
-    if (loc.startsWith('/profile')) return 2;
+    if (loc.startsWith('/map')) return 2;
+    if (loc.startsWith('/profile')) return 3;
     return 0; // '/'
   }
 
@@ -94,6 +101,9 @@ class _HomeShell extends StatelessWidget {
               context.go('/upload');
               break;
             case 2:
+              context.go('/map');
+              break;
+            case 3:
               context.go('/profile');
               break;
           }
@@ -103,6 +113,10 @@ class _HomeShell extends StatelessWidget {
           NavigationDestination(
             icon: Icon(Icons.add_box_outlined),
             label: 'Upload',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.map),
+            label: 'Map',
           ),
           NavigationDestination(
             icon: Icon(Icons.person_outline),

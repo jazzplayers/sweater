@@ -2,8 +2,24 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:sweater/models/user_profile.dart';
 
 class UserRepository {
+
   final FirebaseFirestore _db;
   UserRepository(this._db);
+
+  Future<void> saveUser(UserProfile user) async {
+    await _db.collection('users').doc(user.uid).set(
+      user.toMap(),
+      SetOptions(merge: true)
+    );
+  }
+
+  Future<void> createUser(UserProfile user) async {
+    await saveUser(user);
+  }
+
+  Future<void> updateUser(UserProfile user) async {
+    await saveUser(user);
+  }
 
   Future<UserProfile?> getUser(String uid) async {
     final doc = await _db.collection('users').doc(uid).get();

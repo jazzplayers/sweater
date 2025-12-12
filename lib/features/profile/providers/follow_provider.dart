@@ -1,11 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sweater/core/providers/firebase_provider.dart';
 import 'package:sweater/core/repositories/follow_repository.dart';
-import 'package:sweater/core/repositories/user_repository.dart';
 import 'package:sweater/models/user_profile.dart';
-import 'package:sweater/features/profile/providers/user_profile_provider.dart';
 
 final followRepositoryProvider = Provider<FollowRepository>((ref) {
   final db = ref.watch(firestoreProvider);

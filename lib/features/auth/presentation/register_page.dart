@@ -1,29 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:sweater/features/feed/presentation/home_page.dart';
-import 'package:sweater/features/auth/register_page.dart';
+import 'package:sweater/features/auth/presentation/login_page.dart';
 import 'dart:async';
-import 'package:sweater/features/auth/auth_provider.dart';
+import 'package:sweater/features/auth/provider/auth_provider.dart';
 
-class LoginPage extends ConsumerStatefulWidget {
-  const LoginPage({super.key});
+class RegisterPage extends ConsumerStatefulWidget {
+  const RegisterPage({super.key});
 
   @override
-  ConsumerState<LoginPage> createState() => _LoginPageState();
+  ConsumerState<RegisterPage> createState() => _RegisterPageState();
 }
 
-class _LoginPageState extends ConsumerState<LoginPage> {
+class _RegisterPageState extends ConsumerState<RegisterPage> {
   final _formKey = GlobalKey<FormState>();
   final _emailCtrl = TextEditingController();
   final _passwordCtrl = TextEditingController();
+  final _displayNameCtrl = TextEditingController();
 
-  final bool _isLoading = false;
+  bool _isLoading = false;
 
   @override
   void dispose() {
     _emailCtrl.dispose();
     _passwordCtrl.dispose();
+    _displayNameCtrl.dispose();
     super.dispose();
   }
 
@@ -49,50 +50,71 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     return null;
   }
 
-  Future<void> logIn() async {
+  String? _validatedisplayName(String? value) {
+    if (value == null || value.trim().isEmpty) {
+      return '닉네임을 입력해주세요';
+    }
+    return null;
+  }
+
+  Future<void> register() async {
     final form = _formKey.currentState;
     if (form == null) return;
     if (!form.validate()) return;
 
+    setState(() => _isLoading = true);
+
     try {
       final authRepo = ref.read(authRepositoryProvider);
-      await authRepo.signIn(_emailCtrl.text.trim(), _passwordCtrl.text);
+      await authRepo.signUp(
+        email: _emailCtrl.text.trim(),
+        password: _passwordCtrl.text,
+        displayName: _displayNameCtrl.text.trim(),
+      );
       if (!mounted) return;
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(const SnackBar(content: Text('로그인 성공')));
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => const HomeScreen()),
+      ).showSnackBar(const SnackBar(content: Text('회원 가입 완료!')));
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const LoginPage()),
       );
     } on FirebaseAuthException catch (e) {
       if (!mounted) return;
       String message;
       switch (e.code) {
+        case 'email-already-in-use':
+          message = '이미 사용 중인 이메일입니다.';
+          break;
         case 'invalid-email':
           message = '이메일 형식이 올바르지 않습니다.';
           break;
-        case 'user-not-found':
-          message = '존재하지 않는 계정입니다.';
+        case 'weak-password':
+          message = '비밀번호가 너무 약합니다(6자 이상 권장).';
           break;
-        case 'wrong-password':
-          message = '비밀번호가 올바르지 않습니다.';
-          break;
-        case 'user-disabled':
-          message = '이 계정은 비활성화되어 있습니다.';
+        case 'operation-not-allowed':
+          message = '이 로그인 방식은 비활성화되어 있습니다.';
           break;
         case 'too-many-requests':
           message = '요청이 너무 많습니다. 잠시 후 다시 시도해주세요.';
           break;
         default:
-          message = '로그인에 실패했습니다. (${e.code})';
+          message = '회원가입에 실패했습니다. (${e.code})';
       }
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(message)));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(message), backgroundColor: Colors.redAccent),
+      );
     } catch (e) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('알 수 없는 오류가 발생했습니다.')));
+      // 2. [추가!] 그 외 모든 오류 처리 (예: Firestore 오류, 네트워크 오류 등)
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('알 수 없는 오류가 발생했습니다: $e'),
+          backgroundColor: Colors.redAccent,
+        ),
+      );
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
     }
   }
 
@@ -100,6 +122,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     _formKey.currentState!.reset();
     _emailCtrl.clear();
     _passwordCtrl.clear();
+    _displayNameCtrl.clear();
   }
 
   @override
@@ -122,7 +145,6 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                       border: const OutlineInputBorder(),
                     ),
                   ),
-                  Container(height: 20),
                   TextFormField(
                     controller: _passwordCtrl,
                     validator: _validatePassword,
@@ -133,26 +155,22 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                     ),
                   ),
                   Container(height: 10),
-                  TextButton(
-                    onPressed: _isLoading ? null : logIn,
-                    child: const Text('Login'),
+                  TextFormField(
+                    controller: _displayNameCtrl,
+                    validator: _validatedisplayName,
+                    decoration: InputDecoration(
+                      labelText: 'NickName',
+                      border: const OutlineInputBorder(),
+                    ),
                   ),
-                  Row(
-                    children: [
-                      Text('Do you wanna register?'),
-                      TextButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => RegisterPage(),
-                            ),
-                          );
-                        },
-                        child: Text('Click Here'),
-                      ),
-                    ],
+                  SizedBox(
+                    height: 48,
+                    child: ElevatedButton(
+                      onPressed: _isLoading ? null : register,
+                      child: Text('회원가입'),
+                    ),
                   ),
+                  const SizedBox(height: 8),
                 ],
               ),
             ),
