@@ -1,7 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:sweater/features/profile/model/avatar.dart';
 import 'package:sweater/models/sweateringstatus.dart';
 import '../../../../models/post.dart';
 import 'package:sweater/features/feed/providers/like_providers.dart';
@@ -10,9 +9,10 @@ import 'package:sweater/utills/time_formatter.dart';
 import 'package:sweater/features/profile/widget/avatar_widget.dart';
 
 class PostCard extends ConsumerWidget {
+  final String uid;
   final Sweateringstatus status;
   final Post post;
-  const PostCard({super.key, required this.post, required this.status});
+  const PostCard({super.key, required this.uid, required this.post, required this.status});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -23,14 +23,8 @@ class PostCard extends ConsumerWidget {
       children: [
         ListTile(
           leading: ProfileAvatar(
-            avatar: Avatar(
-              uid: post.ownerId,
-              avatarId: post.ownerId,
-              completedAt: DateTime.now(),
-              status: status,
-              imageUrl: post.ownerPhotoURL ?? '',
-              isPublic: true,
-            ),
+            uid: post.ownerId,
+            status: status,
           ),
           title: Text(post.ownerName),
           subtitle: Text(formatTimeAgo(post.createdAt)),

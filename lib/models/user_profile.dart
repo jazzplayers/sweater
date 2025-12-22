@@ -23,8 +23,8 @@ class UserProfile {
 
   /// 이 부분은 Firebase에서 가져온 데이터를 Dart객체로 변환하거나,
   ///  반대로 객체를 Firestore에 저장할 수 있게 변환하는 코드이다.
-  factory UserProfile.fromMap(Map<String, dynamic> map) => UserProfile(
-    uid: 'uid',
+  factory UserProfile.fromMap(Map<String, dynamic> map, String uid) => UserProfile(
+    uid: uid,
     email: map['email'],
     displayName: map['displayName'] ?? '',
     photoURL: map['photoURL'],
@@ -35,7 +35,6 @@ class UserProfile {
   );
 
   Map<String, dynamic> toMap() => {
-    'uid': uid,
     'email': email,
     'displayName': displayName,
     'photoURL': photoURL,

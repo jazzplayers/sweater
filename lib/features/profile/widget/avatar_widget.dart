@@ -1,27 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:sweater/features/profile/providers/avatar_provider.dart';
 import 'package:sweater/features/profile/providers/user_profile_provider.dart';
 import 'package:sweater/models/sweateringstatus.dart';
 import 'package:sweater/features/profile/model/avatar.dart';
+import 'package:sweater/models/user_profile.dart';
+import 'package:sweater/features/profile/providers/user_profile_provider.dart';
 
 class ProfileAvatar extends ConsumerWidget {
-final Avatar avatar;
+final Sweateringstatus status;
+final String uid;
 final double radius = 35.0;
 
   const ProfileAvatar({
     super.key,
-    required this.avatar,
+    required this.uid,
+    required this.status,
   });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final userAsync = ref.watch(userFutureProvider(avatar.uid));
-    final currentUser = ref.watch(currentUserProvider);
-    final isMe = currentUser?.uid == avatar.uid;
-    final targetUid = isMe ? currentUser!.uid : avatar.uid;
-    
+    final userAsync = ref.watch(userFutureProvider(uid));
     return userAsync.when(
-
       data: (user) {
         final avatarWidget = CircleAvatar(
           radius: radius,
@@ -37,7 +37,7 @@ final double radius = 35.0;
               : null,
         );
 
-        return _buildByStatus(avatarWidget, avatar.status);
+        return _buildByStatus(avatarWidget, status);
       },
 
       
@@ -48,7 +48,7 @@ final double radius = 35.0;
 
 
   Widget _buildByStatus(Widget child, Sweateringstatus status) {
-    switch (avatar.status) {
+    switch (status) {
       case Sweateringstatus.none:
         return child;
       case Sweateringstatus.sweatering:

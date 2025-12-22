@@ -56,14 +56,9 @@ class FollowerPage extends ConsumerWidget {
                   final user = followers[index];
                   return ListTile(
                     leading: ProfileAvatar(
-                      avatar: Avatar(
-                        uid: user.uid,
-                        avatarId: user.uid,
-                        completedAt: DateTime.now(),
-                        status: status,
-                        imageUrl: user.photoURL ?? '',
-                      ),
-                    ),  
+                      uid: user.uid,
+                      status: status,
+                    ),
                     title: Text(user.displayName),
                     onTap: () {
                       context.push('/profile/${user.uid}');

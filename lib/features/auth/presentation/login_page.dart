@@ -62,7 +62,8 @@ class _LoginPageState extends ConsumerState<LoginPage> {
         context,
       ).showSnackBar(const SnackBar(content: Text('로그인 성공')));
       Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => const FeedPage()),
+        MaterialPageRoute(builder: (context) => const FeedPage(uid: ''), // Pass the uid appropriately
+        ),
       );
     } on FirebaseAuthException catch (e) {
       if (!mounted) return;

@@ -24,13 +24,13 @@ class UserRepository {
   Future<UserProfile?> getUser(String uid) async {
     final doc = await _db.collection('users').doc(uid).get();
     if (!doc.exists) return null;
-    return UserProfile.fromMap(doc.data()!);
+    return UserProfile.fromMap(doc.data()!, uid);
   }
 
   Stream<UserProfile?> watchUser(String uid) {
     return _db.collection('users').doc(uid).snapshots().map((doc) {
       if (!doc.exists) return null;
-      return UserProfile.fromMap(doc.data()!);
+      return UserProfile.fromMap(doc.data()!, uid);
     });
   }
 }

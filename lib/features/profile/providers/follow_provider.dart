@@ -17,7 +17,7 @@ final followersProvider = FutureProvider.family<List<UserProfile>, String>((
   final snapshot =
       await db.collection('users').doc(uid).collection('followers').get();
 
-  return snapshot.docs.map((doc) => UserProfile.fromMap(doc.data())).toList();
+  return snapshot.docs.map((doc) => UserProfile.fromMap(doc.data(), doc.id)).toList();
 });
 
 final followingsProvider = FutureProvider.family<List<UserProfile>, String>((
@@ -28,5 +28,5 @@ final followingsProvider = FutureProvider.family<List<UserProfile>, String>((
   final snapshot =
       await db.collection('users').doc(uid).collection('followings').get();
 
-  return snapshot.docs.map((doc) => UserProfile.fromMap(doc.data())).toList();
+  return snapshot.docs.map((doc) => UserProfile.fromMap(doc.data(), doc.id)).toList();
 });

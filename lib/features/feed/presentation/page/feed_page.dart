@@ -9,7 +9,8 @@ import 'package:sweater/features/profile/widget/avatar_widget.dart';
 
 
 class FeedPage extends ConsumerWidget {
-  const FeedPage({super.key});
+  final String uid;
+  const FeedPage({super.key, required this.uid});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -46,7 +47,7 @@ class FeedPage extends ConsumerWidget {
                                 final avatar = avatars[avatarIndex];
                                 return Padding(
                                   padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 12.0),
-                                  child: ProfileAvatar(avatar: avatar),
+                                  child: ProfileAvatar(uid: uid, status: avatar.status),
                                 );
                               },
                             );
@@ -68,7 +69,7 @@ class FeedPage extends ConsumerWidget {
                       );
                     }
                     final post = state.items[index - 1];
-                    return PostCard(post: post, status: status);
+                    return PostCard(uid: uid, post: post, status: status);
                   },
                 ),
               ),

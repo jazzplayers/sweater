@@ -2,24 +2,28 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sweater/core/providers/post_provider.dart';
 import 'package:sweater/features/auth/provider/auth_provider.dart';
-import 'package:sweater/features/profile/model/avatar.dart';
 import 'package:sweater/features/profile/providers/follow_state.dart';
 import 'package:sweater/features/profile/providers/user_profile_provider.dart';
+import 'package:sweater/models/sweateringstatus.dart';
 import 'package:sweater/models/user_profile.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:sweater/features/profile/providers/avatar_provider.dart';
 import 'package:sweater/features/profile/widget/avatar_widget.dart';
 
 
 class ProfilePage extends ConsumerWidget {
-  final Avatar avatar;
-  final String targetUid;
-  const ProfilePage({super.key, required this.targetUid, required this.avatar});
+  final String uid;
+  const ProfilePage({
+    super.key,
+    required this.uid,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final asyncUser = ref.watch(userFutureProvider(targetUid));
-    final followState = ref.watch(followControllerProvider(targetUid));
-    final asyncPosts = ref.watch(userPostsProvider(targetUid));
+    final asyncUser = ref.watch(userFutureProvider(uid));
+    final followState = ref.watch(followControllerProvider(uid));
+    final asyncPosts = ref.watch(userPostsProvider(uid));
+    final sweateringstatus = ref.watch(avatarRepositoryProvider);
 
     return DefaultTabController(
       length: 3,
@@ -56,7 +60,7 @@ class ProfilePage extends ConsumerWidget {
           loading: () => const Center(),
           error: (e, _) => Center(child: Text('Error: $e')),
           data: (user) {
-            if (user == null) {
+                          if (user == null) {
               return const Center(child: Text('User not found'));
             }
       
@@ -70,7 +74,14 @@ class ProfilePage extends ConsumerWidget {
                     const SizedBox(height: 24),
                     Column(
                       children: [
-                    ProfileAvatar(avatar: avatar),
+                    ProfileAvatar(
+                      uid: uid,
+                      status: sweateringstatus.status,
+                    ),
+                      ],
+                    ),
+                    Column(
+                      children: [
                     const SizedBox(height: 16),
                     Text(user.displayName, style: const TextStyle(fontSize: 20)),
                       ]
@@ -133,10 +144,9 @@ class ProfilePage extends ConsumerWidget {
                                         ref
                                             .read(
                                               followControllerProvider(
-                                                targetUid,
+                                                  uid,
                                               ).notifier,
-                                            )
-                                            .toggle(),
+                                            ).toggle(),
                             child:
                                 followState.isLoading
                                     ? const SizedBox(
@@ -259,7 +269,7 @@ class UserSearchDelegate extends SearchDelegate<UserProfile?> {
     .get();
 
     return snapshot.docs
-        .map((doc) => UserProfile.fromMap(doc.data()))
+        .map((doc) => UserProfile.fromMap(doc.data(), doc.id))
         .toList();
   }
   

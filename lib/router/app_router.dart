@@ -9,6 +9,7 @@ import 'package:sweater/features/feed/presentation/page/new_post_page.dart';
 import 'package:sweater/features/profile/presentation/profile_page.dart';
 import 'dart:async';
 import 'package:sweater/features/map/presentation/map.dart';
+import 'package:sweater/models/sweateringstatus.dart';
 
 final goRouterProvider = Provider<GoRouter>((ref) {
   // ✅ authStateChanges "스트림"을 직접 사용
@@ -34,6 +35,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       return null;
     },
     routes: [
+      
       GoRoute(path: '/login', builder: (context, state) => const LoginPage()),
       // ✅ ShellRoute로 탭 구조 구성
       ShellRoute(
@@ -44,26 +46,28 @@ final goRouterProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: '/',
             pageBuilder:
-                (context, state) => const NoTransitionPage(child: FeedPage()),
+                (context, state) {
+              final uid = ref.read(firebaseAuthProvider).currentUser!.uid;
+              return NoTransitionPage(child: FeedPage(uid: uid));
+            },
           ),
           GoRoute(
             path: '/upload',
             pageBuilder:
                 (context, state) =>
-                    const NoTransitionPage(child: NewPostPage()),
+                     NoTransitionPage(child: NewPostPage()),
           ),
            GoRoute(
             path: '/map',
             pageBuilder:
-                (context, state) => const NoTransitionPage(child: MapPage()),
+                (context, state) =>  NoTransitionPage(child: MapPage()),
           ),
           GoRoute(
             path: '/profile',
             builder: (context, state) {
               final auth = ref.read(firebaseAuthProvider);
               final uid = auth.currentUser!.uid;
-
-              return ProfilePage(targetUid: uid);
+              return ProfilePage(uid: uid , status: Sweateringstatus status);
             },
           ),
         ],
@@ -82,7 +86,7 @@ class _HomeShell extends StatelessWidget {
     if (loc.startsWith('/upload')) return 1;
     if (loc.startsWith('/map')) return 2;
     if (loc.startsWith('/profile')) return 3;
-    return 0; // '/'
+    return 0;
   }
 
   @override
