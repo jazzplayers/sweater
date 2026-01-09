@@ -1,7 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:sweater/models/sweateringstatus.dart';
+import 'package:sweater/features/sweatering/model/sweateringstatus.dart';
 import '../../../../models/post.dart';
 import 'package:sweater/features/feed/providers/like_providers.dart';
 import 'package:sweater/core/providers/firebase_provider.dart';
@@ -24,7 +24,6 @@ class PostCard extends ConsumerWidget {
         ListTile(
           leading: ProfileAvatar(
             uid: post.ownerId,
-            status: status,
           ),
           title: Text(post.ownerName),
           subtitle: Text(formatTimeAgo(post.createdAt)),

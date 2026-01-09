@@ -1,4 +1,4 @@
-import 'sweateringstatus.dart';
+import '../features/sweatering/model/sweateringstatus.dart';
 
 class UserSweatering {
   final String uid;

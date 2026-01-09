@@ -9,7 +9,7 @@ import 'package:sweater/features/feed/presentation/page/new_post_page.dart';
 import 'package:sweater/features/profile/presentation/profile_page.dart';
 import 'dart:async';
 import 'package:sweater/features/map/presentation/map.dart';
-import 'package:sweater/models/sweateringstatus.dart';
+import 'package:sweater/features/sweatering/model/sweateringstatus.dart';
 
 final goRouterProvider = Provider<GoRouter>((ref) {
   // ✅ authStateChanges "스트림"을 직접 사용
@@ -67,7 +67,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
             builder: (context, state) {
               final auth = ref.read(firebaseAuthProvider);
               final uid = auth.currentUser!.uid;
-              return ProfilePage(uid: uid , status: Sweateringstatus status);
+              return ProfilePage(uid: uid);
             },
           ),
         ],

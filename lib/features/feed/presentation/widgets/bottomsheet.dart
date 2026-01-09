@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:sweater/features/sweatering/presentation/sweatering_page.dart';
-import 'package:sweater/models/sweateringstatus.dart';
+import 'package:sweater/features/sweatering/model/sweateringstatus.dart';
 import 'package:sweater/models/sport.dart';
 import 'package:sweater/features/sweatering/widget/build_switch_tile.dart';
 import 'package:sweater/features/sweatering/widget/wheelpicker.dart';

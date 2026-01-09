@@ -1,12 +1,17 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:sweater/features/profile/model/avatar.dart';
-import 'package:sweater/models/user_profile.dart';
-import 'package:sweater/models/sweateringstatus.dart';
+import 'package:sweater/features/sweatering/model/sweateringstatus.dart';
 
 class AvatarRepository {
   final FirebaseFirestore _db;
   AvatarRepository(this._db);
+
+  Stream<Map<String, dynamic>> watchAvatarDoc (String uid) {
+    return _db.collection('avatars').doc(uid).snapshots().map((doc) {
+      return doc.data() ?? {};
+    });
+  }
 
   DocumentReference<Map<String, dynamic>> avatarDocRef({
     required String uid,
@@ -17,7 +22,7 @@ class AvatarRepository {
   Future<Avatar?> getUserAvatar(String uid) async {
     final doc = await avatarDocRef(uid: uid).get();
     if (doc.exists) {
-      return Avatar.fromMap(doc.data()!);
+      return Avatar.fromMap(doc.data()!, uid);
     }
     return null;
   }
@@ -37,7 +42,7 @@ class AvatarRepository {
   Future<List<Avatar>> getAllAvatars() async {
     final querySnapshot = await _db.collectionGroup('avatars').get();
     return querySnapshot.docs
-        .map((doc) => Avatar.fromMap(doc.data()))
+        .map((doc) => Avatar.fromMap(doc.data(), doc.id))
         .toList();
   }
 
@@ -48,14 +53,14 @@ class AvatarRepository {
         .collection('avatars')
         .get();
     return querySnapshot.docs
-        .map((doc) => Avatar.fromMap(doc.data()))
+        .map((doc) => Avatar.fromMap(doc.data() , uid))
         .toList();
   }
 
   Stream<List<Avatar>> globalAvatarsStream() {
     return _db.collectionGroup('avatars').snapshots().map((snapshot) {
       return snapshot.docs
-          .map((doc) => Avatar.fromMap(doc.data()))
+          .map((doc) => Avatar.fromMap(doc.data(), doc.id))
           .toList();
     });
   }

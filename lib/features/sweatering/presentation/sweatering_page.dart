@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sweater/features/feed/presentation/widgets/bottomsheet.dart';
 import 'package:sweater/models/sport.dart';
-import 'package:sweater/models/sweateringstatus.dart';
+import 'package:sweater/features/sweatering/model/sweateringstatus.dart';
 
 class SweateringPage extends ConsumerStatefulWidget {
   final Sport sport;

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:sweater/models/sweateringstatus.dart';
+import 'package:sweater/features/sweatering/model/sweateringstatus.dart';
 import '../../providers/post_list_provider.dart';
 import '../widgets/post_card.dart';
 import 'package:sweater/features/feed/presentation/widgets/bottomsheet.dart';
@@ -47,7 +47,7 @@ class FeedPage extends ConsumerWidget {
                                 final avatar = avatars[avatarIndex];
                                 return Padding(
                                   padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 12.0),
-                                  child: ProfileAvatar(uid: uid, status: avatar.status),
+                                  child: ProfileAvatar(uid: uid),
                                 );
                               },
                             );

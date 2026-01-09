@@ -1,25 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:sweater/features/profile/providers/avatar_provider.dart';
 import 'package:sweater/features/profile/providers/user_profile_provider.dart';
-import 'package:sweater/models/sweateringstatus.dart';
-import 'package:sweater/features/profile/model/avatar.dart';
-import 'package:sweater/models/user_profile.dart';
-import 'package:sweater/features/profile/providers/user_profile_provider.dart';
+import 'package:sweater/features/sweatering/model/sweateringstatus.dart';
+import 'package:sweater/features/sweatering/provider/sweatering_provider.dart';
 
 class ProfileAvatar extends ConsumerWidget {
-final Sweateringstatus status;
 final String uid;
 final double radius = 35.0;
 
   const ProfileAvatar({
     super.key,
     required this.uid,
-    required this.status,
   });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final sweateringstatus = ref.watch(sweateringstatusProvider(uid));
     final userAsync = ref.watch(userFutureProvider(uid));
     return userAsync.when(
       data: (user) {
@@ -37,7 +33,7 @@ final double radius = 35.0;
               : null,
         );
 
-        return _buildByStatus(avatarWidget, status);
+        return _buildByStatus(avatarWidget, sweateringstatus);
       },
 
       
@@ -45,28 +41,52 @@ final double radius = 35.0;
       loading: () => const CircularProgressIndicator(),
     );
   }
-
-
-  Widget _buildByStatus(Widget child, Sweateringstatus status) {
+  Widget _buildByStatus(Widget avatar, Sweateringstatus status) {
     switch (status) {
-      case Sweateringstatus.none:
-        return child;
       case Sweateringstatus.sweatering:
-        return Container(
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            border: Border.all(color: Colors.greenAccent, width: 4),
-          ),
-          child: child,
+        return Stack(
+          alignment: Alignment.center,
+          children: [
+            avatar,
+            Container(
+              width: radius * 2,
+              height: radius * 2,
+              decoration: BoxDecoration(
+                color: Colors.black.withOpacity(0.5),
+                shape: BoxShape.circle,
+              ),
+              child: const Center(
+                child: CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                ),
+              ),
+            ),
+          ],
         );
       case Sweateringstatus.completed:
-        return Container(
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            border: Border.all(color: Colors.redAccent, width: 4),
-          ),
-          child: child,
+        return Stack(
+          alignment: Alignment.center,
+          children: [
+            avatar,
+            Container(
+              width: radius * 2,
+              height: radius * 2,
+              decoration: BoxDecoration(
+                color: Colors.green.withOpacity(0.5),
+                shape: BoxShape.circle,
+              ),
+              child: const Center(
+                child: Icon(
+                  Icons.check,
+                  color: Colors.white,
+                  size: 30,
+                ),
+              ),
+            ),
+          ],
         );
+      default:
+        return avatar;
     }
   }
 }

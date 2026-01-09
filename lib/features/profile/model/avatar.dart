@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:sweater/models/sweateringstatus.dart';
+import 'package:sweater/features/sweatering/model/sweateringstatus.dart';
 
 class Avatar {
   final Sweateringstatus status;
@@ -23,7 +23,10 @@ class Avatar {
   return Avatar(
     completedAt: (map['completedAt'] as Timestamp?)?.toDate() ??
         DateTime.fromMillisecondsSinceEpoch(0), // 또는 DateTime.now()
-    status: statusfromcode(map['status']),
+    status: Sweateringstatus.values.firstWhere(
+      (e) => e.name == map['status'],
+      orElse: () => Sweateringstatus.none,
+    ),
     imageUrl: rawImageUrl is String ? rawImageUrl : '',
     isPublic: rawisPublic is bool ? rawisPublic : false,
   );
@@ -32,7 +35,7 @@ class Avatar {
 Map<String, dynamic> toMap() {
   return {
     'completedAt': Timestamp.fromDate(completedAt),
-    'status': statecode(status),
+    'status': status.name,
     'imageUrl': imageUrl,
     'isPublic': isPublic, 
   };
