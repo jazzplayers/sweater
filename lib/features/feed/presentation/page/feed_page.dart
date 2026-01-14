@@ -17,8 +17,7 @@ class FeedPage extends ConsumerWidget {
     final Sweateringstatus status = ref.watch(sweateringStateProvider);
     final state = ref.watch(postListProvider);
     final notifier = ref.read(postListProvider.notifier);
-    final avatarsStream = ref.watch(avatarsStreamProvider);
-
+    
     return Scaffold(
       appBar: AppBar(title: const Text('SWEATER'), centerTitle: true),
 
@@ -38,23 +37,6 @@ class FeedPage extends ConsumerWidget {
                      if (index == 0) {
                       return SizedBox(
                         height: 80,
-                        child: avatarsStream.when(
-                          data: (avatars) {
-                            return ListView.builder(
-                              scrollDirection: Axis.horizontal,
-                              itemCount: avatars.length,
-                              itemBuilder: (context, avatarIndex) {
-                                final avatar = avatars[avatarIndex];
-                                return Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 12.0),
-                                  child: ProfileAvatar(uid: uid),
-                                );
-                              },
-                            );
-                          },
-                          loading: () =>  Center(child: Text(''),),
-                          error: (e, st) => Center(child: Text('Error: $e')),
-                        ),
                       );
                     }
 

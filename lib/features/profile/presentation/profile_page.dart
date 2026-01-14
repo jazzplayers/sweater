@@ -4,10 +4,9 @@ import 'package:sweater/core/providers/post_provider.dart';
 import 'package:sweater/features/auth/provider/auth_provider.dart';
 import 'package:sweater/features/profile/providers/follow_state.dart';
 import 'package:sweater/features/profile/providers/user_profile_provider.dart';
-import 'package:sweater/models/user_profile.dart';
+import 'package:sweater/features/profile/model/user_profile.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:sweater/features/profile/widget/avatar_widget.dart';
-import 'package:sweater/features/sweatering/provider/sweatering_provider.dart';
 
 
 class ProfilePage extends ConsumerWidget {
@@ -22,7 +21,6 @@ class ProfilePage extends ConsumerWidget {
     final asyncUser = ref.watch(userFutureProvider(uid));
     final followState = ref.watch(followControllerProvider(uid));
     final asyncPosts = ref.watch(userPostsProvider(uid));
-    final sweateringstatus = ref.watch(sweateringstatusProvider(uid));
 
     return DefaultTabController(
       length: 3,
@@ -267,7 +265,7 @@ class UserSearchDelegate extends SearchDelegate<UserProfile?> {
     .get();
 
     return snapshot.docs
-        .map((doc) => UserProfile.fromMap(doc.data(), doc.id))
+        .map((doc) => UserProfile.fromDoc(doc))
         .toList();
   }
   

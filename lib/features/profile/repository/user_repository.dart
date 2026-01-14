@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:sweater/models/user_profile.dart';
+import 'package:sweater/features/profile/model/user_profile.dart';
 
 class UserRepository {
 
@@ -13,24 +13,16 @@ class UserRepository {
     );
   }
 
-  Future<void> createUser(UserProfile user) async {
-    await saveUser(user);
-  }
-
-  Future<void> updateUser(UserProfile user) async {
-    await saveUser(user);
-  }
-
   Future<UserProfile?> getUser(String uid) async {
     final doc = await _db.collection('users').doc(uid).get();
     if (!doc.exists) return null;
-    return UserProfile.fromMap(doc.data()!, uid);
+    return UserProfile.fromDoc(doc);
   }
 
   Stream<UserProfile?> watchUser(String uid) {
     return _db.collection('users').doc(uid).snapshots().map((doc) {
       if (!doc.exists) return null;
-      return UserProfile.fromMap(doc.data()!, uid);
+      return UserProfile.fromDoc(doc);
     });
   }
 }

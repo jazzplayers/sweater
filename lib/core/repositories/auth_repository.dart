@@ -1,6 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:sweater/models/user_profile.dart';
+import 'package:sweater/features/profile/model/user_profile.dart';
 import 'dart:async';
 
 /// FirebaseAuth/Firestore 호출을 한 곳으로 모음(UI/Controller 가 firebase에 직접 의존 하지 않게)

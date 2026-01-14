@@ -7,7 +7,7 @@ import 'package:sweater/features/profile/providers/follower_search_provider.dart
 import 'package:sweater/features/profile/widget/avatar_widget.dart';
 import 'package:sweater/features/sweatering/model/sweateringstatus.dart';
 import 'package:sweater/features/profile/providers/user_profile_provider.dart';
-import 'package:sweater/features/profile/model/avatar.dart';
+import 'package:sweater/models/story_avatar.dart';
 
 
 class FollowerPage extends ConsumerWidget {

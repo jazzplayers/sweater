@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:sweater/features/profile/providers/follow_provider.dart';
-import 'package:sweater/models/user_profile.dart';
+import 'package:sweater/features/profile/model/user_profile.dart';
 
 final followerSearchQueryProvider = StateProvider.family<String, String>(
   (ref, uid) => '',

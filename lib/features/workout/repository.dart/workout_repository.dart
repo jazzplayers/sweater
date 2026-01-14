@@ -14,6 +14,7 @@ class WorkoutRepository {
       }
     });
   }
+  
   Future<void> createWorkout(Workout workout) async {
     await _db.collection('workouts').doc(workout.workoutid).set(workout.toMap());
   }

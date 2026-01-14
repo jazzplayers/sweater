@@ -6,7 +6,7 @@ enum WorkoutStatus {idle, active, paused, completed, canceled}
 class Workout {
   final String workoutid;
   final String uid;
-  final String sport;
+  final String sportName;
   final WorkoutStatus status;
   final DateTime? startedAt;
   final DateTime? pausedAt;
@@ -16,7 +16,7 @@ class Workout {
   Workout({
     required this.workoutid,
     required this.uid,
-    required this.sport,
+    required this.sportName,
     required this.status,
     this.startedAt,
     this.pausedAt,
@@ -33,7 +33,7 @@ class Workout {
     return Workout(
       workoutid: id,
       uid: map['uid'] as String? ?? '',
-      sport: map['sport'] as String? ?? '',
+      sportName: map['sport'] as String? ?? '',
       status: status,
       startedAt: (map['startedAt'] as Timestamp?)?.toDate(),
       pausedAt: (map['pausedAt'] as Timestamp?)?.toDate(),
@@ -45,7 +45,7 @@ class Workout {
   Map<String, dynamic> toMap() {
     return {
       'uid': uid,
-      'sport': sport,
+      'sportName': sportName,
       'status': status.name,
       'startedAt': startedAt != null ? Timestamp.fromDate(startedAt!) : null,
       'pausedAt': pausedAt != null ? Timestamp.fromDate(pausedAt!) : null,
